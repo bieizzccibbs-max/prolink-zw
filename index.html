@@ -4,24 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ProLink Zimbabwe connects vetted graduates with clients for tutoring, medical, legal and technical services.">
-<title>ProLink Zimbabwe - Bridging the Graduate Gap</title>
+<title>ProLink Zimbabwe</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
 
 <style>
+body { padding-bottom: 70px; }
+
 .gradient-bg {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
+background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
 }
+
 .professional-card {
-    transition: all 0.3s ease;
+transition: 0.3s ease;
 }
 .professional-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+transform: translateY(-5px);
+box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
+
 .modal-bg {
-    background: rgba(0,0,0,0.6);
+background: rgba(0,0,0,0.6);
 }
 </style>
 </head>
@@ -29,173 +39,161 @@
 <body class="bg-gray-50 font-sans">
 
 <!-- NAV -->
-<nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
-<div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-        <i class="fas fa-bridge text-2xl text-yellow-400"></i>
-        <span class="text-xl font-bold">ProLink <span class="text-yellow-400">ZW</span></span>
-    </div>
-
-    <div class="hidden md:flex space-x-8 font-medium">
-        <a href="#" class="hover:text-yellow-400">Find Work</a>
-        <a href="#" class="hover:text-yellow-400">Hire Professionals</a>
-        <a href="#" class="hover:text-yellow-400">Verification</a>
-    </div>
-
-    <div class="flex space-x-4">
-        <button onclick="openAuth()" class="hover:text-yellow-400">Login</button>
-        <button onclick="openAuth()" class="bg-yellow-400 text-blue-900 px-5 py-2 rounded-full font-bold hover:bg-white">
-            Sign Up
-        </button>
-    </div>
-</div>
+<nav class="gradient-bg text-white shadow-lg p-4 text-center text-xl font-bold">
+ProLink <span class="text-yellow-400">ZW</span>
 </nav>
 
 <!-- HERO -->
-<header class="relative gradient-bg text-white py-24">
-<div class="absolute inset-0 bg-black opacity-40"></div>
-
-<div class="relative container mx-auto px-4 text-center">
-<h1 class="text-4xl md:text-6xl font-extrabold mb-6">
-Empowering Zimbabwe's Graduates
-</h1>
-
-<p class="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto">
-Vetted professionals. Negotiated fees. Real impact.
-</p>
-
-<div class="flex justify-center">
-<input type="text" placeholder="Search tutor, mechanic, doctor..."
-class="w-full md:w-1/2 px-5 py-4 rounded-l-xl text-gray-800">
-
-<button class="bg-yellow-400 text-blue-900 px-6 rounded-r-xl font-bold">
-Search
+<section class="gradient-bg text-white p-6 text-center">
+<h1 class="text-3xl font-bold mb-3">Find Trusted Professionals Nearby</h1>
+<p class="opacity-90 mb-4">Verified. Negotiable. Reliable.</p>
+<button onclick="getUserLocation()" class="bg-yellow-400 text-blue-900 px-5 py-2 rounded-full font-bold">
+Enable Location
 </button>
-</div>
-</div>
-</header>
-
-<!-- FILTERS -->
-<section class="bg-white py-8 border-b">
-<div class="container mx-auto px-4 flex flex-wrap justify-between items-center gap-4">
-
-<select class="border px-4 py-2 rounded-lg">
-<option>All Locations</option>
-<option>Harare</option>
-<option>Bulawayo</option>
-<option>Mutare</option>
-<option>Gweru</option>
-</select>
-
-<div class="flex space-x-3">
-<button class="px-4 py-2 bg-blue-100 rounded-full text-blue-700">Tutors</button>
-<button class="px-4 py-2 bg-green-100 rounded-full text-green-700">Medical</button>
-<button class="px-4 py-2 bg-orange-100 rounded-full text-orange-700">Technical</button>
-<button class="px-4 py-2 bg-purple-100 rounded-full text-purple-700">Legal</button>
-</div>
-
-</div>
 </section>
 
-<!-- MAIN -->
-<main class="container mx-auto px-4 py-16">
-<h2 class="text-3xl font-bold mb-8">Featured Professionals</h2>
+<!-- MAP -->
+<section class="p-4">
+<div id="map" class="w-full h-64 rounded-xl shadow"></div>
+</section>
 
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- PROFESSIONAL LIST -->
+<section class="p-4">
+<h2 class="text-xl font-bold mb-4">Available Nearby</h2>
 
-<!-- CARD -->
-<div class="professional-card bg-white rounded-2xl border p-6">
-<div class="mb-3 text-sm text-green-600 font-bold">
-<i class="fas fa-certificate"></i> VERIFIED
-</div>
-
-<div class="flex items-center mb-4">
-<img src="https://randomuser.me/api/portraits/men/32.jpg"
-class="w-16 h-16 rounded-full border-2 border-blue-500"
-alt="Tinashe Profile">
-<div class="ml-4">
-<h3 class="font-bold text-lg">Tinashe M.</h3>
-<p class="text-gray-500 text-sm">Math Tutor (UZ)</p>
-</div>
-</div>
-
-<p class="text-gray-600 text-sm mb-4">
-Helping A-Level students excel in Mathematics and Statistics.
-</p>
-
+<div class="professional-card bg-white rounded-xl p-4 mb-4 shadow">
 <div class="flex justify-between items-center">
+<div>
+<h3 class="font-bold">Tinashe M.</h3>
+<p class="text-sm text-gray-500">Math Tutor</p>
+<p id="distance1" class="text-sm text-blue-600"></p>
+</div>
 <span class="font-bold text-blue-700">$15/hr</span>
+</div>
+
 <button onclick="openBooking('Tinashe M.',15)"
-class="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-700">
-Book
+class="w-full mt-3 bg-blue-600 text-white py-2 rounded-lg font-bold">
+Hire Now
 </button>
 </div>
-</div>
 
-</div>
-</main>
-
-<!-- FOOTER -->
-<footer class="bg-gray-900 text-white py-12 text-center">
-<p class="text-gray-400">Proudly Zimbabwean 🇿🇼</p>
-<p class="text-xs text-gray-600 mt-4">
-© 2026 ProLink Zimbabwe. All Rights Reserved.
-</p>
-</footer>
+</section>
 
 <!-- BOOKING MODAL -->
 <div id="bookingModal" class="fixed inset-0 hidden modal-bg flex items-center justify-center">
-<div class="bg-white p-8 rounded-xl w-96">
-<h3 class="text-xl font-bold mb-4">Book Professional</h3>
+<div class="bg-white p-6 rounded-xl w-80">
+<h3 class="font-bold text-lg mb-3">Send Offer</h3>
 
-<p id="professionalName" class="mb-2 font-semibold"></p>
+<p id="proName" class="mb-2"></p>
 
 <input id="offerInput" type="number" placeholder="Your Offer ($)"
-class="w-full border px-4 py-2 mb-4 rounded">
+class="w-full border px-3 py-2 rounded mb-3">
 
 <button onclick="submitBooking()"
 class="w-full bg-blue-600 text-white py-2 rounded font-bold">
-Submit Offer
+Submit
 </button>
 
 <button onclick="closeBooking()"
-class="w-full mt-3 text-gray-500">
+class="w-full mt-2 text-gray-500">
 Cancel
 </button>
 </div>
 </div>
 
-<!-- AUTH MODAL -->
-<div id="authModal" class="fixed inset-0 hidden modal-bg flex items-center justify-center">
-<div class="bg-white p-8 rounded-xl w-96">
-<h3 class="text-xl font-bold mb-4">Login / Register</h3>
-
-<input type="email" placeholder="Email"
-class="w-full border px-4 py-2 mb-3 rounded">
-
-<input type="password" placeholder="Password"
-class="w-full border px-4 py-2 mb-4 rounded">
-
-<button class="w-full bg-yellow-400 text-blue-900 py-2 rounded font-bold">
-Continue
+<!-- BOTTOM NAV -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-3 shadow-lg">
+<button class="text-blue-600 flex flex-col items-center">
+<i class="fas fa-home text-xl"></i>
+<span class="text-xs">Home</span>
 </button>
 
-<button onclick="closeAuth()"
-class="w-full mt-3 text-gray-500">
-Cancel
+<button class="flex flex-col items-center">
+<i class="fas fa-map text-xl"></i>
+<span class="text-xs">Map</span>
 </button>
-</div>
-</div>
+
+<button class="flex flex-col items-center">
+<i class="fas fa-briefcase text-xl"></i>
+<span class="text-xs">Bookings</span>
+</button>
+
+<button class="flex flex-col items-center">
+<i class="fas fa-user text-xl"></i>
+<span class="text-xs">Profile</span>
+</button>
+</nav>
 
 <script>
-let selectedProfessional = "";
-let selectedPrice = 0;
+let userLat = null;
+let userLng = null;
+let map;
 
-function openBooking(name, price){
-selectedProfessional = name;
-selectedPrice = price;
-document.getElementById("professionalName").innerText =
-`${name} - Suggested Fee $${price}`;
+function getUserLocation() {
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(
+function(position) {
+userLat = position.coords.latitude;
+userLng = position.coords.longitude;
+loadMap();
+calculateAndShowDistance();
+},
+function() {
+alert("Please enable GPS.");
+}
+);
+}
+}
+
+function loadMap() {
+map = L.map('map').setView([userLat, userLng], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: '© OpenStreetMap'
+}).addTo(map);
+
+L.marker([userLat, userLng])
+.addTo(map)
+.bindPopup("You are here")
+.openPopup();
+
+const proLat = -17.8252;
+const proLng = 31.0335;
+
+L.marker([proLat, proLng])
+.addTo(map)
+.bindPopup("Tinashe M.");
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+const R = 6371;
+const dLat = (lat2 - lat1) * Math.PI / 180;
+const dLon = (lon2 - lon1) * Math.PI / 180;
+
+const a =
+Math.sin(dLat/2) * Math.sin(dLat/2) +
+Math.cos(lat1 * Math.PI / 180) *
+Math.cos(lat2 * Math.PI / 180) *
+Math.sin(dLon/2) * Math.sin(dLon/2);
+
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+return R * c;
+}
+
+function calculateAndShowDistance(){
+const proLat = -17.8252;
+const proLng = 31.0335;
+
+const distance = calculateDistance(userLat,userLng,proLat,proLng);
+document.getElementById("distance1").innerText =
+distance.toFixed(1) + " km away";
+}
+
+let selectedPro = "";
+function openBooking(name,price){
+selectedPro = name;
+document.getElementById("proName").innerText =
+`${name} - Suggested $${price}`;
 document.getElementById("bookingModal").classList.remove("hidden");
 }
 
@@ -204,21 +202,13 @@ document.getElementById("bookingModal").classList.add("hidden");
 }
 
 function submitBooking(){
-let offer = document.getElementById("offerInput").value;
-if(offer === ""){
-alert("Please enter your offer.");
+const offer = document.getElementById("offerInput").value;
+if(!offer){
+alert("Enter offer.");
 return;
 }
-alert(`Offer of $${offer} sent to ${selectedProfessional}`);
+alert("Offer sent to " + selectedPro);
 closeBooking();
-}
-
-function openAuth(){
-document.getElementById("authModal").classList.remove("hidden");
-}
-
-function closeAuth(){
-document.getElementById("authModal").classList.add("hidden");
 }
 </script>
 
